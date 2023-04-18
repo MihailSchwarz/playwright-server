@@ -60,32 +60,6 @@ async function fetchHtml(url) {
   }
 }
 
-async function closeServer() {
-  console.log("Closing server...");
-  try {
-    for (const page of pages) {
-      if (page && !page.isClosed()) {
-        await page.close();
-      }
-    }
-
-    if (context && !context.isClosed()) {
-      await context.close();
-    }
-
-    if (browser && !browser.isConnected()) {
-      await browser.close();
-    }
-  } catch (error) {
-    console.error("Error closing server:", error);
-  } finally {
-    process.exit();
-  }
-}
-
-process.on("SIGINT", closeServer);
-process.on("SIGTERM", closeServer);
-
 app.get("/r2/", async (req, res) => {
   const url = req.query.urlsdj;
 
@@ -110,3 +84,40 @@ app.get("/", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+async function closeServer() {
+  console.log("Closing server...");
+
+  try {
+    for (const page of pages) {
+      try {
+        if (page) {
+          await page.close();
+        }
+      } catch (error) {
+        console.error("Error closing page:", error);
+      }
+    }
+
+    try {
+      if (context) {
+        await context.close();
+      }
+    } catch (error) {
+      console.error("Error closing context:", error);
+    }
+
+    try {
+      if (browser) {
+        await browser.close();
+      }
+    } catch (error) {
+      console.error("Error closing browser:", error);
+    }
+  } finally {
+    process.exit();
+  }
+}
+
+process.on("SIGINT", closeServer);
+process.on("SIGTERM", closeServer);
