@@ -9,18 +9,26 @@ let browser;
 let context;
 
 (async () => {
-  browser = await firefox.launch({ headless: true });
-  context = await browser.newContext();
+  try {
+    browser = await firefox.launch({ headless: true });
+    context = await browser.newContext();
+  } catch (error) {
+    console.error("Error initializing browser:", error);
+    process.exit(1);
+  }
 })();
 
 app.get("/r2/", async (req, res) => {
   const url = req.query.urlsdj;
 
-  const page = await context.newPage();
-  const url2 =
-    "https://services.rome2rio.com/api/1.5/json/search?key=jGq3Luw3&oName=%D0%9F%D1%80%D0%B0%D0%B3%D0%B0%2C+%D0%98%D1%81%D0%BF%D0%B0%D0%BD%D0%B8%D1%8F&dName=%D0%90%D0%BB%D0%B8%D0%BA%D0%B0%D0%BD%D1%82%D0%B5%2C+%D0%98%D1%81%D0%BF%D0%B0%D0%BD%D0%B8%D1%8F&languageCode=ru&currencyCode=EUR&uid=ISRey20210619084420183ufdd&aqid=ISRey20210619084420183ufdd&analytics=false&debugFeatures=false&groupOperators=false";
+  if (!url) {
+    res.send("ok");
+    return;
+  }
 
-  if (url) {
+  try {
+    const page = await context.newPage();
+
     await page.goto(url);
 
     const html = await page.content();
@@ -28,7 +36,10 @@ app.get("/r2/", async (req, res) => {
     await page.close();
 
     res.send(html);
-  } else res.send("ok");
+  } catch (error) {
+    console.error("Error processing request:", error);
+    res.status(500).send("Internal server error");
+  }
 });
 
 app.get("/", async (req, res) => {
