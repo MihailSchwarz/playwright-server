@@ -19,6 +19,7 @@ let context;
 
     for (let i = 0; i < PAGE_POOL_SIZE; i++) {
       const page = await context.newPage();
+      page.isAvailable = true;
       pages.push(page);
     }
   } catch (error) {
@@ -29,7 +30,13 @@ let context;
 
 async function fetchHtml(url) {
   await pagePool.onIdle();
-  const page = pages.shift();
+  const page = pages.find((page) => page.isAvailable);
+
+  if (!page) {
+    throw new Error("No available pages in the pool.");
+  }
+
+  page.isAvailable = false;
 
   try {
     await page.goto(url, { timeout: 30000 });
@@ -39,7 +46,7 @@ async function fetchHtml(url) {
     console.error("Error processing request:", error);
     throw error;
   } finally {
-    pages.push(page);
+    page.isAvailable = true;
   }
 }
 
