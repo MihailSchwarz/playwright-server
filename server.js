@@ -14,7 +14,7 @@ let context;
 })();
 
 app.get("/r2/", async (req, res) => {
-  const url = req.query.url;
+  const url = req.query.urlsdj;
 
   const page = await context.newPage();
   const url2 =
