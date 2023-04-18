@@ -1,9 +1,13 @@
-// server.js
-const express = require("express");
-const { firefox } = require("playwright");
+import express from "express";
+import { firefox } from "playwright";
+import PQueue from "p-queue";
 
 const app = express();
 const PORT = 30823;
+
+const PAGE_POOL_SIZE = 5;
+const pagePool = new PQueue({ concurrency: PAGE_POOL_SIZE });
+const pages = [];
 
 let browser;
 let context;
@@ -12,11 +16,32 @@ let context;
   try {
     browser = await firefox.launch({ headless: true });
     context = await browser.newContext();
+
+    for (let i = 0; i < PAGE_POOL_SIZE; i++) {
+      const page = await context.newPage();
+      pages.push(page);
+    }
   } catch (error) {
     console.error("Error initializing browser:", error);
     process.exit(1);
   }
 })();
+
+async function fetchHtml(url) {
+  await pagePool.onIdle();
+  const page = pages.shift();
+
+  try {
+    await page.goto(url, { timeout: 30000 });
+    const html = await page.content();
+    return html;
+  } catch (error) {
+    console.error("Error processing request:", error);
+    throw error;
+  } finally {
+    pages.push(page);
+  }
+}
 
 app.get("/r2/", async (req, res) => {
   const url = req.query.urlsdj;
@@ -27,17 +52,10 @@ app.get("/r2/", async (req, res) => {
   }
 
   try {
-    const page = await context.newPage();
-
-    await page.goto(url);
-
-    const html = await page.content();
-
-    await page.close();
-
+    const html = await fetchHtml(url);
     res.send(html);
   } catch (error) {
-    console.error("Error processing request:", error);
+    console.error("Error while handling request:", error);
     res.status(500).send("Internal server error");
   }
 });

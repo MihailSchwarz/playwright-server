@@ -1,18 +1,22 @@
 {
   "name": "playwright-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
+  "description": "A simple server to fetch HTML content using Playwright",
+  "main": "server.js",
   "scripts": {
-    "test": "node demo",
-    "start": "nodemon server.js",
-    "dev": "nodemon --watch '*.ts' --exec 'ts-node' index.ts"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MihailSchwarz/playwright-server.git"
   },
-  "keywords": [],
+  "keywords": [
+    "playwright",
+    "server",
+    "web-scraper"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -20,12 +24,11 @@
   },
   "homepage": "https://github.com/MihailSchwarz/playwright-server#readme",
   "dependencies": {
-    "minimist": "^1.2.8",
-    "playwright": "^1.32.3",
-    "url": "^0.11.0"
+    "express": "^4.18.2",
+    "p-queue": "^7.3.4",
+    "playwright": "^1.32.3"
   },
   "devDependencies": {
-    "express": "^4.18.2",
     "nodemon": "^2.0.22"
   }
 }
