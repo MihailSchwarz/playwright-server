@@ -28,14 +28,24 @@ let context;
   }
 })();
 
+async function waitForAvailablePage() {
+  const interval = 100;
+  return new Promise((resolve) => {
+    const checkForAvailablePage = () => {
+      const page = pages.find((page) => page.isAvailable);
+      if (page) {
+        resolve(page);
+      } else {
+        setTimeout(checkForAvailablePage, interval);
+      }
+    };
+    checkForAvailablePage();
+  });
+}
+
 async function fetchHtml(url) {
   await pagePool.onIdle();
-  const page = pages.find((page) => page.isAvailable);
-
-  if (!page) {
-    throw new Error("No available pages in the pool.");
-  }
-
+  const page = await waitForAvailablePage();
   page.isAvailable = false;
 
   try {
