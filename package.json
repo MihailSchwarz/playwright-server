@@ -2,6 +2,9 @@
   "name": "playwright-server",
   "version": "1.0.0",
   "type": "module",
+  "exports": {
+    "./ecosystem.config": "./ecosystem.config.js"
+  },
   "description": "A simple server to fetch HTML content using Playwright",
   "main": "server.js",
   "scripts": {
