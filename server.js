@@ -127,3 +127,7 @@ async function closeServer() {
 
 process.on("SIGINT", closeServer);
 process.on("SIGTERM", closeServer);
+process.on("uncaughtException", (error) => {
+  console.error("Unexpected error", error);
+  // здесь можно добавить логику восстановления, например, перезапуск браузера или страницы
+});
