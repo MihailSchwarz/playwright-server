@@ -49,7 +49,7 @@ async function fetchHtml(url) {
   page.isAvailable = false;
 
   try {
-    await page.goto(url, { timeout: 30000 });
+    await page.goto(url, { timeout: 15000 });
     const html = await page.content();
     return html;
   } catch (error) {
