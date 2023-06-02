@@ -129,6 +129,5 @@ process.on("SIGINT", closeServer);
 process.on("SIGTERM", closeServer);
 process.on("uncaughtException", (error) => {
   console.error("Unexpected error", error);
-  console.log("Received request for url:", req.query.urlsdj);
   // здесь можно добавить логику восстановления, например, перезапуск браузера или страницы
 });
