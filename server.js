@@ -49,12 +49,13 @@ async function fetchHtml(url) {
   page.isAvailable = false;
 
   try {
-    await page.goto(url, { timeout: 15000 });
+    await page.goto(url, { timeout: 30000 });
     const html = await page.content();
     return html;
   } catch (error) {
     console.error("Error processing request:", error);
-    throw error;
+    // Вместо повторной передачи ошибки возвращаем null или другое значение по умолчанию
+    return null;
   } finally {
     page.isAvailable = true;
   }
@@ -70,7 +71,12 @@ app.get("/r2/", async (req, res) => {
 
   try {
     const html = await fetchHtml(url);
-    res.send(html);
+    // Проверяем, не является ли html null
+    if (html) {
+      res.send(html);
+    } else {
+      res.status(500).send("Internal server error");
+    }
   } catch (error) {
     console.error("Error while handling request:", error);
     res.status(500).send("Internal server error");
