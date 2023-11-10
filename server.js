@@ -88,7 +88,7 @@ app.get("/", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`v.0.2 - Server listening on port ${PORT}`);
+  console.log(`v.0.3 - Server listening on port ${PORT}`);
 });
 
 async function closeServer() {

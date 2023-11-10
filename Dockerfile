@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
     libdbus-glib-1-2 \
     libdbus-1-3 \
     libnss3
-    
+
 # Создать директорию приложения
 WORKDIR /usr/src/playwright-server
 
@@ -30,14 +30,18 @@ WORKDIR /usr/src/playwright-server
 COPY package*.json ./
 
 RUN npm install
+RUN npm install pm2 -g
 RUN npx playwright install 
+RUN npx playwright install-deps
 # Если вы создаете код для продакшена
 # RUN npm ci --only=production
 
-# Скопировать исходный код приложения
+# Копировать файл конфигурации PM2 и исходный код приложения
+COPY ecosystem.config.cjs .
 COPY . .
 
 # Прокинуть порт
 EXPOSE 30823
 
-CMD [ "node", "server.js" ]
+# Запуск приложения через PM2 и файл конфигурации
+CMD ["pm2-runtime", "start", "ecosystem.config.cjs"]
