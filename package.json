@@ -1,12 +1,11 @@
 {
   "name": "playwright-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A simple server to fetch HTML content using Playwright",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -24,11 +23,8 @@
   },
   "homepage": "https://github.com/MihailSchwarz/playwright-server#readme",
   "dependencies": {
-    "express": "^4.18.2",
-    "p-queue": "^7.3.4",
-    "playwright": "^1.34.3"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
+    "express": "latest",
+    "p-queue": "latest",
+    "playwright": "latest"
   }
 }
