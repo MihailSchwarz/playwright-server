@@ -28,9 +28,32 @@ let context;
   }
 })();
 
+async function fetchHtml(url) {
+  try {
+    await pagePool.onIdle();
+    const page = await waitForAvailablePage();
+    page.isAvailable = false;
+
+    try {
+      await page.goto(url, { timeout: 15000 });
+      const html = await page.content();
+      return html;
+    } catch (error) {
+      console.error("Error processing request:", error);
+      return null;
+    } finally {
+      page.isAvailable = true;
+    }
+  } catch (error) {
+    console.error("Error waiting for available page:", error);
+    return null;
+  }
+}
+
 async function waitForAvailablePage() {
   const interval = 100;
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    // Добавлен обработчик reject
     const checkForAvailablePage = () => {
       const page = pages.find((page) => page.isAvailable);
       if (page) {
@@ -39,26 +62,13 @@ async function waitForAvailablePage() {
         setTimeout(checkForAvailablePage, interval);
       }
     };
-    checkForAvailablePage();
+
+    try {
+      checkForAvailablePage();
+    } catch (error) {
+      reject(error); // Отклоняем промис в случае ошибки
+    }
   });
-}
-
-async function fetchHtml(url) {
-  await pagePool.onIdle();
-  const page = await waitForAvailablePage();
-  page.isAvailable = false;
-
-  try {
-    await page.goto(url, { timeout: 15000 });
-    const html = await page.content();
-    return html;
-  } catch (error) {
-    console.error("Error processing request:", error);
-    // Вместо повторной передачи ошибки возвращаем null или другое значение по умолчанию
-    return null;
-  } finally {
-    page.isAvailable = true;
-  }
 }
 
 app.get("/r2/", async (req, res) => {
@@ -88,7 +98,7 @@ app.get("/", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`v.0.3 - Server listening on port ${PORT}`);
+  console.log(`v.1.0 - Server listening on port ${PORT}`);
 });
 
 async function closeServer() {
