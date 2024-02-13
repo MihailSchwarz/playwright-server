@@ -25,6 +25,8 @@
   "dependencies": {
     "express": "latest",
     "p-queue": "latest",
-    "playwright": "latest"
+    "playwright": "latest",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }
