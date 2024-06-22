@@ -101,7 +101,7 @@ const proxies = [
 "156.238.10.14:5096:zrguskhf:pitpbu81akov",
 "216.173.108.117:6732:zrguskhf:pitpbu81akov",
 "45.130.128.112:9129:zrguskhf:pitpbu81akov",
-"193.8.231.229:9235:zrguskh
+"193.8.231.229:9235:pitpbu81akov",
 
 ];
 
