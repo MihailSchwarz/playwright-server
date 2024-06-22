@@ -115,11 +115,11 @@ const proxies = [
       const [server, port, username, password] = proxyString.split(":");
 
       const context = await browser.newContext({
-        /*proxy: {
+        proxy: {
           server: `http://${server}:${port}`,
           username,
           password,
-        },*/
+        },
       });
 
       const page = await context.newPage();
